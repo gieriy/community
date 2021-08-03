@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
+
 
 @SpringBootTest
 class CommunityApplicationTests {
@@ -23,7 +23,7 @@ class CommunityApplicationTests {
 
     @Test
     void testselect(){
-        System.out.println(discussPostMapper.selectDiscussPostRows(0));
+        System.out.println(userMapper.updateHeader(101,"http://images.nowcoder.com/head/25t.png"));
     }
 
 }

@@ -40,7 +40,6 @@ public class HomeController {
             }
         }
         model.addAttribute("discussPosts", discussPosts);
-        //System.out.println(discussPosts);
         return "/index";
     }
 }
