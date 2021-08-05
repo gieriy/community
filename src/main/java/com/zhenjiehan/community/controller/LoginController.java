@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -40,18 +38,22 @@ public class LoginController implements CommunityConstant {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
+    //转发到注册页面
     @RequestMapping(path = "/register", method = RequestMethod.GET)
     public String getRegisterPage() {
         return "/site/register";
     }
 
+    //转发到登录页面
     @RequestMapping(path = "/login", method = RequestMethod.GET)
     public String getLoginPage() {
         return "/site/login";
     }
 
+    //注册账号
     @RequestMapping(path = "/register", method = RequestMethod.POST)
     public String register(Model model, User user) {
+        //调用 service 方法 , 将注册产生的提示信息返回接收
         Map<String, Object> map = userService.register(user);
         if (map == null || map.isEmpty()) {
             model.addAttribute("msg", "注册成功, 我们已经向您的邮箱发送了一封激活邮箱, 请尽快激活!");
@@ -65,12 +67,14 @@ public class LoginController implements CommunityConstant {
         }
     }
 
+    //激活账号
     @RequestMapping(path = "/activation/{userId}/{code}",method = RequestMethod.GET)
     public String activation(Model model, @PathVariable("userId") int userId, @PathVariable("code") String code) {
+        //调用 service 激活方法 , 返回
         int result = userService.activation(userId, code);
         if (result == ACTIVATION_SUCCESS) {
             model.addAttribute("msg", "激活成功, 您的账号已经可以正常使用了!");
-            model.addAttribute("target", "/l    ogin");
+            model.addAttribute("target", "/login");
         } else if (result == ACTIVATION_REPEAT) {
             model.addAttribute("msg", "无效操作, 该账号已经激活过了!");
             model.addAttribute("target", "/index");
@@ -99,7 +103,7 @@ public class LoginController implements CommunityConstant {
         }
     }
 
-    @RequestMapping(path = "login", method = RequestMethod.POST)
+    @RequestMapping(path = "/login", method = RequestMethod.POST)
     public String login(String username, String password, String code, boolean rememberme,
                         Model model, HttpSession session, HttpServletResponse response) {
         //检测验证码
@@ -122,5 +126,11 @@ public class LoginController implements CommunityConstant {
             model.addAttribute("passwordMsg",map.get("passwordMsg"));
             return "/site/login";
         }
+    }
+
+    @RequestMapping(path = "/logout", method = RequestMethod.GET)
+    public String logout(@CookieValue("ticket") String ticket) {
+        userService.logout(ticket);
+        return "redirect:/login";
     }
 }

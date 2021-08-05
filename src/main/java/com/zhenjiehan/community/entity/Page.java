@@ -18,7 +18,7 @@ public class Page {
     private String path;
 
     /**
-     *
+     * 获得起始行号
      * @return
      */
     public int getOffset(){

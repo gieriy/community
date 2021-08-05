@@ -43,6 +43,7 @@ public class UserService implements CommunityConstant {
         return userMapper.selectById(id);
     }
 
+    //注册账号
     public Map<String, Object> register(User user) {
         Map<String, Object> map = new HashMap<>();
 
@@ -153,5 +154,10 @@ public class UserService implements CommunityConstant {
         map.put("ticket", loginTicket.getTicket());
 
         return map;
+    }
+
+    //退出
+    public void logout(String ticket) {
+        loginTicketMapper.updateStatus(ticket, 1);
     }
 }
