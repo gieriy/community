@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class UserService implements CommunityConstant {
@@ -165,8 +162,31 @@ public class UserService implements CommunityConstant {
         return loginTicketMapper.selectByTicket(ticket);
     }
 
-    //更新头像
+    //更换头像
     public int updateHeader(int userId, String headerUrl) {
         return userMapper.updateHeader(userId, headerUrl);
+    }
+
+
+    //更换密码
+    public Map<String, Object> updatePassword(User user, String oldPassword, String newPassword) {
+        Map<String, Object> map = new HashMap<>();
+
+        if (StringUtils.isBlank(oldPassword)) {
+            map.put("oldPasswordMsg", "原密码不能为空, 请重新输入!");
+            return map;
+        }
+        if (StringUtils.isBlank(newPassword)) {
+            map.put("newPasswordMsg", "新密码不能为空, 请重新输入!");
+            return map;
+        }
+        oldPassword = CommunityUtil.md5(oldPassword + user.getSalt());
+        if (!(user.getPassword().equals(oldPassword))) {
+            map.put("oldPasswordMsg", "原密码不正确, 请重新输入!");
+            return map;
+        }
+        newPassword = CommunityUtil.md5(newPassword + user.getSalt());
+        userMapper.updatePassword(user.getId(), newPassword);
+        return map;
     }
 }
