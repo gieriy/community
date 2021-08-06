@@ -1,5 +1,6 @@
 package com.zhenjiehan.community.controller;
 
+import com.zhenjiehan.community.annotation.LoginRequired;
 import com.zhenjiehan.community.entity.User;
 import com.zhenjiehan.community.service.UserService;
 import com.zhenjiehan.community.utils.CommunityUtil;
@@ -45,11 +46,13 @@ public class UserController {
     @Autowired
     private HostHolder hostHolder;
 
+    @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
     public String getSettingPage() {
         return "/site/setting";
     }
 
+    @LoginRequired
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model) {
         if (headerImage == null) {
@@ -84,6 +87,7 @@ public class UserController {
         return "redirect:/index";
     }
 
+
     @RequestMapping(path = "/header/{fileName}", method = RequestMethod.GET)
     public void getHeader(@PathVariable("fileName") String fileName, HttpServletResponse response) {
         //服务器存放文件路径
@@ -105,6 +109,7 @@ public class UserController {
         }
     }
 
+    @LoginRequired
     @RequestMapping(path = "/updatePassword", method = RequestMethod.POST)
     public String updatePassword(String oldPassword, String newPassword, Model model) {
         User user = hostHolder.getUser();
